@@ -1,22 +1,53 @@
 "use strict";
 const { getFullPopulateObject } = require("./helpers");
 
-module.exports = ({ strapi }) => {
-  // Subscribe to the lifecycles that we are intrested in.
-  strapi.db.lifecycles.subscribe((event) => {
-    if (event.action === "beforeFindMany" || event.action === "beforeFindOne") {
-      const level = event.params?.pLevel;
+function deleteKeys(obj, keys) {
+  if (obj === null || typeof obj !== "object") return;
 
-      const defaultDepth =
-        strapi
-          .plugin("strapi-v5-plugin-populate-deep")
-          ?.config("defaultDepth") || 5;
+  const keysSet = new Set(keys);
+
+  function recursiveDelete(obj) {
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        recursiveDelete(item);
+      }
+    } else {
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          if (keysSet.has(key)) {
+            delete obj[key];
+          } else if (typeof obj[key] === "object") {
+            recursiveDelete(obj[key]);
+          }
+        }
+      }
+    }
+  }
+
+  recursiveDelete(obj);
+  return obj;
+}
+
+module.exports = ({ strapi }) => {
+  const pluginConfig = strapi.plugin("strapi-v5-plugin-populate-deep")?.config;
+  const defaultDepth = pluginConfig("defaultDepth") || 5;
+  const keysToDelete = pluginConfig("keysToDelete") || [];
+
+  // Subscribe to the lifecycles that we are interested in.
+  strapi.db.lifecycles.subscribe((event) => {
+    const { action, params, model } = event;
+    if (action === "beforeFindMany" || action === "beforeFindOne") {
+      const level = params?.pLevel;
 
       if (level !== undefined) {
         const depth = level ?? defaultDepth;
-        const modelObject = getFullPopulateObject(event.model.uid, depth, []);
-        event.params.populate = modelObject.populate;
+        const modelObject = getFullPopulateObject(model.uid, depth, []);
+        params.populate = modelObject.populate;
       }
+    }
+
+    if (action === "afterFindMany" || action === "afterFindOne") {
+      event.result = deleteKeys(event.result, keysToDelete);
     }
   });
 };
