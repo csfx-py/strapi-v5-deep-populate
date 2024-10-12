@@ -29,7 +29,7 @@ function deleteKeys(obj, keys) {
 }
 
 module.exports = ({ strapi }) => {
-  const pluginConfig = strapi.plugin("strapi-v5-plugin-populate-deep")?.config;
+  const pluginConfig = strapi.plugin("strapi-v5-deep-populate")?.config;
   const defaultDepth = pluginConfig("defaultDepth") || 5;
   const keysToDelete = pluginConfig("keysToDelete") || [];
 
