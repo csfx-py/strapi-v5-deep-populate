@@ -1,28 +1,24 @@
 {
-  "name": "strapi-v5-plugin-populate-deep",
-  "version": "4.0.2",
+  "name": "strapi-v5-deep-populate",
+  "version": "1.0.0",
   "description": "Strapi v5 plugin that populates nested content.",
   "strapi": {
-    "name": "strapi-v5-plugin-populate-deep",
+    "name": "strapi-v5-deep-populate",
     "description": "API helper to populate deep content structures for Strapi v5.",
     "kind": "plugin"
   },
   "dependencies": {},
   "author": {
-    "name": "Mustafa ONAL"
+    "name": "Shreyas Prabhu"
   },
-  "contributors": [
-    "Christofer Jungberg",
-    "Mustafa ONAL"
-  ],
   "maintainers": [
     {
-      "name": "Mustafa ONAL"
+      "name": "Shreyas Prabhu"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/NEDDL/strapi-v5-plugin-populate-deep"
+    "url": "https://github.com/csfx-py/strapi-v5-deep-populate"
   },
   "engines": {
     "node": ">=14.19.1 <=20.x.x",
